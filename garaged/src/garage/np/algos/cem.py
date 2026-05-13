@@ -7,7 +7,11 @@ import numpy as np
 from garage import log_performance, TrajectoryBatch
 from garage.np import paths_to_tensors
 from garage.np.algos.rl_algorithm import RLAlgorithm
-from garage.tf.samplers import BatchSampler
+
+
+def _get_batch_sampler():
+    from garage.tf.samplers import BatchSampler  # noqa: PLC0415
+    return BatchSampler
 
 
 class CEM(RLAlgorithm):

@@ -40,7 +40,7 @@ class ConsistentNormalizedEnv(AkroWrapperTrait, gym.Wrapper):
 
     def _apply_normalize_obs(self, obs):
         normalized_obs = (obs - self._obs_mean) / (np.sqrt(self._obs_var) + 1e-8)
-        return normalized_obs
+        return normalized_obs.astype(np.float32)
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
@@ -51,6 +51,7 @@ class ConsistentNormalizedEnv(AkroWrapperTrait, gym.Wrapper):
 
         if self._flatten_obs:
             obs = gym.spaces.utils.flatten(self.env.observation_space, obs)
+            obs = obs.astype(np.float32)
 
         return obs
 
@@ -78,6 +79,7 @@ class ConsistentNormalizedEnv(AkroWrapperTrait, gym.Wrapper):
 
         if self._flatten_obs:
             next_obs = gym.spaces.utils.flatten(self.env.observation_space, next_obs)
+            next_obs = next_obs.astype(np.float32)
 
         return next_obs, reward, done, info
 

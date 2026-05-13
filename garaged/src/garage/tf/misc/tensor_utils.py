@@ -3,7 +3,10 @@ from collections import namedtuple
 from collections.abc import Iterable
 
 import numpy as np
-import tensorflow as tf
+try:
+    import tensorflow as tf
+except ImportError:
+    tf = None
 
 
 # pylint: disable=unused-argument

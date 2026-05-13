@@ -5,6 +5,29 @@ import numpy as np
 from gym import spaces
 
 
+class _SimProxy:
+    """Compatibility proxy: exposes mujoco-py style self.sim.data/model API
+    on top of native mujoco (gym >= 0.22). Allows METRA env code written for
+    mujoco-py to work with the native mujoco Python bindings."""
+
+    __slots__ = ('_env',)
+
+    def __init__(self, env):
+        self._env = env
+
+    @property
+    def data(self):
+        return self._env.data
+
+    @property
+    def model(self):
+        return self._env.model
+
+    def forward(self):
+        import mujoco as _mujoco
+        _mujoco.mj_forward(self._env.model, self._env.data)
+
+
 def convert_observation_to_space(observation):
     if isinstance(observation, dict):
         space = spaces.Dict(OrderedDict([
@@ -22,6 +45,15 @@ def convert_observation_to_space(observation):
 
 
 class MujocoTrait:
+    @property
+    def sim(self):
+        """Compatibility property: mujoco-py style sim access for native mujoco."""
+        try:
+            return self._sim_proxy
+        except AttributeError:
+            self._sim_proxy = _SimProxy(self)
+            return self._sim_proxy
+
     def _set_action_space(self):
         bounds = self.model.actuator_ctrlrange.copy().astype(np.float32)
         low, high = bounds.T
