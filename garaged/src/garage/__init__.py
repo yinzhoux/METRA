@@ -1,4 +1,6 @@
 """Garage Base."""
+import dowel_wrapper
+
 from garage._dtypes import InOutSpec
 from garage._dtypes import TimeStep
 from garage._dtypes import TimeStepBatch
